@@ -87,6 +87,13 @@ int main() {
 	}
 	printf("\n\naverage turnaround time = %f",avg_tat);
 	printf("\naverage waiting time = %f",avg_wt);
+
+    //gantt chart
+    int final_p_ct = p[no_of_process - 1].ct;
+    char gantt_chart[final_p_ct] = " ";
+    for(int i = 0; i < no_of_process; i++) {
+       gantt_chart[p[i].at] 
+    }
     free(p);
     p = NULL;
 }
