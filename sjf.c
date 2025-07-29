@@ -40,9 +40,13 @@ int main() {
         process[i].completed = false;
 	}
  
-	printf("Enter the arrival time and burst time for processes\n");
+	printf("Enter the arrival time for processes\n");
 	for(int i = 0; i < no_of_process; i++) {
 		scanf("%d",&process[i].at);	
+	}
+ 
+	printf("Enter the burst time for processes\n");
+	for(int i = 0; i < no_of_process; i++) {
 		scanf("%d",&process[i].bt);	
 	}
  
@@ -52,8 +56,10 @@ int main() {
 	int completed = 0;
 
     while(completed < no_of_process) {
-       int idx = -1; 
+       int idx = 0; 
        int min_burst = 999999;  
+       bool found = false;
+
        for(int i = 0; i < no_of_process; i++) {
 
             if(process[i].at <= current_time && 
@@ -62,19 +68,21 @@ int main() {
                if(process[i].bt < min_burst) {
                     min_burst = process[i].bt;
                     idx = i;
+                    found = true
                }
 
             }
        }
-       if(idx != -1) {
+       if(found == true) {
             process[idx].ct = process[idx].bt + current_time;
             process[idx].tat = process[idx].ct - process[idx].at;
             process[idx].wt = process[idx].tat - process[idx].bt;
             process[idx].completed = true;
             current_time += process[idx].bt;
+            completed++;
        }
        else {
-            current_time += 1;
+            current_time++;
        }
 
     }
