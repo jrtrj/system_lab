@@ -1,3 +1,4 @@
+//Lower the value higher the priority
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -11,6 +12,7 @@ struct Process {
 	int ct;
 	int tat;
 	int wt;
+	int priority;
 	bool completed;
 };
 
@@ -40,30 +42,31 @@ int main() {
         process[i].completed = false;
 	}
  
-	printf("Enter the arrival time and burst time for processes\n");
+	printf("Enter the arrival time, burst time and priority for processes\n");
 	for(int i = 0; i < no_of_process; i++) {
 		scanf("%d",&process[i].at);	
 		scanf("%d",&process[i].bt);	
+		scanf("%d",&process[i].priority);	
 	}
  
 	sort(process,no_of_process);
-    
+
 	int current_time = 0;
 	int completed = 0;
 
+    int log_index = 0;
+    int execution_log[1000];
+
     while(completed < no_of_process) {
        int idx = -1; 
-       int min_burst = 999999;  
+       int max_priority = 999999; //lower the value higher the priority
        for(int i = 0; i < no_of_process; i++) {
-
             if(process[i].at <= current_time && 
                     process[i].completed == false) {
-
-               if(process[i].bt < min_burst) {
-                    min_burst = process[i].bt;
+               if(process[i].priority < max_priority) {
+                    max_priority = process[i].priority;
                     idx = i;
                }
-
             }
        }
        if(idx != -1) {
@@ -72,9 +75,14 @@ int main() {
             process[idx].wt = process[idx].tat - process[idx].bt;
             process[idx].completed = true;
             current_time += process[idx].bt;
+            completed++;
+            //for gantt chart
+            for(int i = 0; i<process[idx].bt; i++){
+                execution_log[log_index++] = process[idx].pid;
+            }
        }
        else {
-            current_time += 1;
+            current_time++;
        }
 
     }
@@ -93,25 +101,14 @@ int main() {
 		printf("\n%d\t%d\t%d\t%d\t%d\t%d",
                 process[i].pid,process[i].at,process[i].bt,process[i].ct,process[i].tat,process[i].wt);
 	}
-	printf("\n\naverage turnaround time = %f",avg_tat);
-	printf("\naverage waiting time = %f",avg_wt);
+	printf("\n\naverage turnaround time = %.2f",avg_tat);
+	printf("\naverage waiting time = %.2f",avg_wt);
 
-    //gantt chart
-    int final_process_ct = process[no_of_process - 1].ct;
-    char gantt_chart[final_process_ct];
-    for(int i = 0; i < final_process_ct; i++) {
-        gantt_chart[i] = ' ';
+    //printing gantt chart
+    printf("\nGantt Chart\n");
+    for(int i = 0;i < log_index;i++) {
+        printf("P%d|",execution_log[i]);
     }
-    for(int i = 0; i < no_of_process; i++) {
-        for(int j = process[i].at; j < process[i].ct; j++) {
-            gantt_chart[j] = '0' + process[i].pid;
-        }
-    }
-
-    printf("\nGantt Chart: ");
-    for (int i = 0; i < final_process_ct; i++) {
-        printf("%c ", gantt_chart[i]);
-    }
-
+    printf("\n");
     return 0;
 }
